@@ -6,7 +6,7 @@ import os
 import tensorflow as tf
 from numpy import array
 from keras.datasets import imdb
-from keras.preprocessing import sequence
+from keras.utils import pad_sequences
 from keras.models import load_model
 
 IMAGE_FOLDER = os.path.join('static', 'img_pool')
@@ -45,7 +45,7 @@ def sent_anly_prediction():
 
         words = text.split() #split string into a list
         x_test = [[word_to_id[word] if (word in word_to_id and word_to_id[word]<=20000) else 0 for word in words]]
-        x_test = sequence.pad_sequences(x_test, maxlen=500) # Should be same which you used for training data
+        x_test = pad_sequences(x_test, maxlen=500) # Should be same which you used for training data
         vector = np.array([x_test.flatten()])
         with graph.as_default():
             probability = model.predict(array([vector][0]))[0][0]
@@ -58,8 +58,7 @@ def sent_anly_prediction():
             sentiment = 'Positive'
             # img_filename = os.path.join(app.config['UPLOAD_FOLDER'], 'Smiling_Emoji.png')
     return render_template('home.html', text=text, sentiment=sentiment, probability=probability)
-#########################Code for Sentiment Analysis
-# created by Harneet and Ojas
+
 if __name__ == "__main__":
     init()
     app.run()
